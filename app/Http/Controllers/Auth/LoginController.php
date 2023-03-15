@@ -26,7 +26,21 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+
+    // @if ()
+    //  // Statements inside body of if
+    // @else
+    //  //Statements inside body of else
+    // @endif
+    protected $redirectTo = 'dashboard';
+
+    // if( $user->roles() == "admin") {// do your magic here
+    //     return redirect()->route('dashboard');
+    // }else{
+
+    // }
+    
+    //  return redirect('/home');
 
     /**
      * Create a new controller instance.
@@ -37,4 +51,13 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    // public function authenticated()
+    // {
+    //     if (Auth::user()->roles = 'admin') { // check if user is admin
+    //         return redirect()->route('dashboard'); // redirect to admin dashboard
+    //     } else {
+    //         return redirect()->intended($this->redirectTo); // redirect to default location
+    //     }
+    // }
 }

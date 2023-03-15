@@ -9,40 +9,53 @@ use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
 use Illuminate\Support\Arr;
+use App\Http\Requests\StoreUser;
 
 class UserController extends Controller
 {
-       
     public function index(Request $request)
     {
         $users = User::orderBy('id','DESC')->paginate(5);
         return view('users.index',compact('users'));
     }
-    
 
     public function create()
     {
-        $roles = Role::pluck('name','name')->all();
+        $roles = Role::all();
         return view('users.create',compact('roles'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUser $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+
+        $image = $request->file('image');
+        $image->storeAs('public/users', $image->hashName());
+    
+        $user = User::create([
+            'name'     => $request->name,
+            'email'   => $request->email,
+            'password'   => Hash::make($request->password),
+            'role'   => $request->role,
+            'image'     => $image->hashName(),
         ]);
     
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $role = Role::create([
+            'name'     => $request->id,
+            'name'     => $request->name,
+            'guard_name'   => 'web',
+        ]);
+
+        if($user){
+            //redirect dengan pesan sukses
+            return redirect()->route('users.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        }else{
+            //redirect dengan pesan error
+            return redirect()->route('users.index')->with(['error' => 'Data Gagal Disimpan!']);
+        }
     
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
     
-        return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+        // return redirect()->route('users.index')
+        //                 ->with('success','User created successfully');
     }
     
     public function show($id)
@@ -68,7 +81,7 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'roles' => 'required'
         ]);
-    
+
         $input = $request->all();
         if(!empty($input['password'])){ 
             $input['password'] = Hash::make($input['password']);

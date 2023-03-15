@@ -1,5 +1,4 @@
-@extends('layouts.app')
-
+@extends('layouts.backend')
 
 @section('content')
 <div class="row">
@@ -8,7 +7,7 @@
             <h2>Edit Role</h2>
         </div>
         <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('roles.index') }}"> Back</a>
+            <a class="btn btn-primary" href="{{ route('roles.index') }}" style="width:75px;"> Back</a>
         </div>
     </div>
 </div>
